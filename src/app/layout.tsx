@@ -7,7 +7,7 @@ import Footer from '@/components/Footer'
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from '@clerk/themes'
 
-
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "JobSensei -  Ai career coach",
@@ -26,7 +26,7 @@ export default function RootLayout({
     }}
     >
       <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={`${inter.className}`}>
         <ThemeProvider
             attribute="class"
             defaultTheme="dark"
