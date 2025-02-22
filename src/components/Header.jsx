@@ -1,6 +1,6 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
 import { Button } from "./ui/button"
-import {ChevronDown, FileText, GraduationCap, PenBox, StarsIcon } from "lucide-react"
+import {ChevronDown, FileText, GraduationCap, LayoutDashboard, PenBox, StarsIcon } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import Link from "next/link"
 
@@ -16,7 +16,10 @@ const Header = () => {
         <div className="flex gap-2">
           <SignedIn>
             <Link href='/industry-insights'>
-              <Button>Industry Insights</Button>
+              <Button >
+                <LayoutDashboard/>
+                <span className="hidden md:block">Industry Insights</span>
+              </Button>
             </Link>
             
               <DropdownMenu>
@@ -36,7 +39,7 @@ const Header = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
-                      href="/ai-cover-letter"
+                      href="/cover-letter"
                       className="flex items-center gap-2"
                     >
                       <PenBox className="h-4 w-4" />
@@ -67,6 +70,7 @@ const Header = () => {
                   userPreviewMainIdentifier: "font-semibold"
                 }
               }}
+              afterSignOutUrl="/"
               />
             </SignedIn>
         </div>
