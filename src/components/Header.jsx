@@ -3,10 +3,12 @@ import { Button } from "./ui/button"
 import {ChevronDown, FileText, GraduationCap, LayoutDashboard, PenBox, StarsIcon } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import Link from "next/link"
+import { checkUser } from "@/lib/CheckUser"
 
 
 
-const Header = () => {
+const Header = async () => {
+  await checkUser()
   return (
     <>
       <div className="absolute top-0 left-0 w-full flex items-center justify-between bg-transparent z-50 px-4 py-3">
