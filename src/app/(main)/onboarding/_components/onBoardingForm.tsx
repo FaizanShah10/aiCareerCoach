@@ -62,33 +62,41 @@ const onBoardingForm = ({industries}: any) => {
 
 
   const onsubmit = async (values: any) => {
-      console.log(values)
-
-      // Values --> industry & subindutry => formattedindustry
-      const formattedIndustry = `${values.industry}-${values.subIndustry.toLowerCase().replace(/ /g, "-")}`
-
-      try {
-        await updateUserFn({
-          formattedIndustry,
-          ...values
-        })
-      } catch (error: any) {
-          toast.error(error.message)
-      }
-
-      reset()
-  }
+    console.log("Submitting form with values:", values);
+  
+    const formattedIndustry = values.subIndustry
+      ? `${values.industry}-${values.subIndustry.toLowerCase().replace(/ /g, "-")}`
+      : values.industry;
+  
+    try {
+      const result = await updateUserFn({
+        formattedIndustry,
+        ...values
+      });
+  
+      console.log("Update Result:", result); // Debugging
+    } catch (error: any) {
+      console.error("Error updating user:", error);
+      toast.error(error.message);
+    }
+  
+    reset();
+  };
+  
   
   const router = useRouter()
 
   //side functions
   useEffect(() => {
-    if(updatedResult?.success && !updateLoading){
-      toast.success("Profile Successfully Completed")
-      router.push('/dashboard')
-      router.refresh()
+    console.log("Updated Result in useEffect:", updatedResult);
+    console.log("Update Loading:", updateLoading);
+    if (updatedResult?.success && !updateLoading) {
+      toast.success("Profile Successfully Completed");
+      router.push('/dashboard');
+      router.refresh();
     }
-  },[updateLoading, updatedResult])
+  }, [updatedResult, updateLoading, router]);
+  
 
   return (
     <div>

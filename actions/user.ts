@@ -4,81 +4,64 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { userAgent } from "next/server";
+import { generateAiIndustryInsights } from "./industryInsights";
 
-export async function updateUser(data: any){
-    const {userId} = await auth()
-    if(!userId){
-        throw new Error("UnAuthorized")
+export async function updateUser(data: any) {
+    const { userId } = await auth();
+    if (!userId) {
+        throw new Error("Unauthorized");
     }
 
     const user = await db.user.findUnique({
-        where: {
-            clerkUserId: userId
-        }
-    })
+        where: { clerkUserId: userId }
+    });
 
-    if(!user){
-        throw new Error("User Not Found")
+    if (!user) {
+        throw new Error("User Not Found");
     }
 
     try {
-        await db?.$transaction(
+        const result = await db.$transaction(
             async (elem) => {
                 let industryInsights = await elem.industryInsight.findUnique({
-                    where: {
-                        industry: data.industry
-                    }
-                }) 
+                    where: { industry: data.industry }
+                });
 
-                if(industryInsights){
-                    return industryInsights         //returning the industry insights as it is
-                }
-
-                //creating new industry insights with some default values
-                if(!industryInsights){
+                if (!industryInsights) {
+                    // Generate AI-based insights if none exist
+                    const insights = await generateAiIndustryInsights(data?.industry);
                     industryInsights = await elem.industryInsight.create({
                         data: {
-                            industry: data.industry,
-                            salaryRanges: [],
-                            growthRate: 0,
-                            demandLevel: 'Medium',
-                            marketOutlook: 'Neutral',
-                            topSkills: [],
-                            keyTrends: [],
-                            recommendedSkills: [],
-                            nextUpdate: new Date(Date.now())
+                            industry: data?.industry,
+                            ...insights,
+                            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
                         }
-                    })
+                    });
                 }
 
-                //updating the user
+                // Updating user details
                 const updatedUser = await elem.user.update({
-                    where: {
-                        id: user.id
-                    },
+                    where: { id: user.id },
                     data: {
                         industry: data.industry,
                         experience: data.experience,
                         bio: data.bio,
                         skills: data.skills
                     }
-    
-                })
+                });
 
-                return {updatedUser, industryInsights}
-
-
+                return { updatedUser, industryInsights };
             },
-            {
-                timeout: 10000
-            }
-            
-        )
-    } catch (error:any) {
-        console.log("Error updating industry insights and user", error.message)
-        throw new Error("Failed to update Profile")
+            { timeout: 10000 }
+        );
+
+        return result; 
+    } catch (error: any) {
+        console.error("Error updating industry insights and user:", error.message);
+        throw new Error("Failed to update Profile");
     }
 }
+
 
 
 export async function getOnBoardingUserStatus(){

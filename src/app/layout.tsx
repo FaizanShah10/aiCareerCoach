@@ -7,6 +7,10 @@ import Footer from '@/components/Footer'
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from '@clerk/themes'
 import { Toaster } from "sonner";
+import RedirectToDashboard from "@/components/redirectsToDashboard";
+
+
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +39,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Header/>
+            <RedirectToDashboard/>
             {children}
             <Toaster richColors/>
             <Footer/>

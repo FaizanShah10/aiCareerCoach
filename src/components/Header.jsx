@@ -11,7 +11,7 @@ const Header = async () => {
   await checkUser()
   return (
     <>
-      <div className="absolute top-0 left-0 w-full flex items-center justify-between bg-transparent z-50 px-4 py-3">
+      <div className="absolute top-0 left-0 w-full flex items-center justify-between bg-transparent z-50 px-24 py-4">
         <div>    
           <h2>Logo</h2>
         </div>
