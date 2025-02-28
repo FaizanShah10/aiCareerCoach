@@ -185,6 +185,34 @@ const DashboardView = ({insights}: any) => {
             </Card>
 
         </div>
+
+        <div className="mt-6 grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-10">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Key Industry Trends</CardTitle>
+                    <CardDescription>Key Trends Driving Market Evolution</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {insights.keyTrends.map((trend: any) => (
+                            <Badge className=" w-auto mb-2 mr-3">{trend}</Badge>
+                    ))}
+                </CardContent>
+                
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Recommended Skills</CardTitle>
+                    <CardDescription>Skills considered to learn</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {insights.recommendedSkills.map((skill: any) => (
+                            <Badge variant={"outline"} className=" mb-2 mr-3">{skill}</Badge>
+                    ))}
+                </CardContent>
+                
+            </Card>
+        </div>
     </div>
   )
 }
