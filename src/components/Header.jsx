@@ -11,7 +11,7 @@ const Header = async () => {
   await checkUser()
   return (
     <>
-      <div className="absolute top-0 left-0 w-full flex items-center justify-between bg-transparent z-50 px-24 py-4">
+      <div className="absolute top-0 left-0 w-full bg-transparent flex items-center justify-between z-50 lg:px-24 md:px-24 px-4 py-4">
         <div>    
           <h2>Logo</h2>
         </div>
@@ -32,9 +32,9 @@ const Header = async () => {
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52 space-y-2 p-2">
+                <DropdownMenuContent align="end" className="w-52 bg-black rounded-md h-52 space-y-10 p-2">
                   <DropdownMenuItem asChild>
-                    <Link href="/resume" className="flex items-center gap-2">
+                    <Link href="/resume" className="flex items-center">
                       <FileText className="h-4 w-4" />
                       Build Resume
                     </Link>
@@ -78,7 +78,6 @@ const Header = async () => {
         </div>
 
       </div>
-      
     </>
   )
 }
