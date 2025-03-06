@@ -3,6 +3,7 @@
 import { db } from "@/lib/prisma"
 import { auth } from "@clerk/nextjs/server"
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { err } from "inngest/types";
 
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
@@ -78,7 +79,7 @@ export async function storeQuizQuestions(questions: any, answers: any, score: an
                 const formattedQuestions = questions.map((q: any, index: any) => ({
                     question: q.question,
                     correctAnswer: q.correctAnswer,
-                    userAnswer: q.userAnswer,
+                    userAnswer: answers[index],
                     isCorrect: q.correctAnswer === answers[index],
                     explanation: q.explanation
                 }))
@@ -132,4 +133,36 @@ export async function storeQuizQuestions(questions: any, answers: any, score: an
                 throw new Error("Error storing quiz questions in database")
             }
 
+}
+
+// For Fetching the Assessments
+export async function getAssessment(){
+    try {
+        const { userId } = await auth();
+            if (!userId) {
+                throw new Error("Unauthorized");
+            }
+        
+            const user = await db.user.findUnique({
+                where: { clerkUserId: userId }
+            });
+        
+            if (!user) {
+                throw new Error("User Not Found");
+            }
+
+            const response = await db.assessment.findMany({
+                where: {
+                    userId: user.id
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            })
+            return response
+
+            // console.log(response)
+    } catch (error: any) {
+        console.log("Error Fetching the Assessments", error.message)
+    }
 }
