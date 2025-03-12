@@ -61,7 +61,7 @@ export async function generateQuizQuestions(){
 }
 
 export async function storeQuizQuestions(questions: any, answers: any, score: any){
-    const { userId } = await auth();
+            const { userId } = await auth();
             if (!userId) {
                 throw new Error("Unauthorized");
             }
