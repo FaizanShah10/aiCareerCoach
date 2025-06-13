@@ -32,14 +32,27 @@ export const onBoardingSchema = z.object({
             )
 })
 
-
 // Contact Information Schema
-const contactInfoSchema = z.object({
+// const contactInfoSchema = z.object({
+//   email: z.string().email("Invalid email address"),
+//   mobileNumber: z.string().min(10, "Invalid mobile number").max(15, "Invalid mobile number"),
+//   linkedIn: z.string().url("Invalid URL").optional(),
+//   githubProfile: z.string().url("Invalid URL").optional(),
+// });
+
+
+// Personal Info Schema
+const personalInfoSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
   email: z.string().email("Invalid email address"),
-  mobileNumber: z.string().min(10, "Invalid mobile number").max(15, "Invalid mobile number"),
-  linkedIn: z.string().url("Invalid URL").optional(),
-  githubProfile: z.string().url("Invalid URL").optional(),
+  phoneNo: z.string().min(10, "Invalid phone number").max(15, "Invalid phone number"), 
+  address: z.string(),
+  jobTitle: z.string().min(5),
+  websiteUrl: z.string().url("Invalid URL").optional(),
 });
+
+
 
 // Work Experience Schema
 const workExperienceSchema = z.array(
@@ -77,7 +90,7 @@ const educationSchema = z.array(
 
 // Resume Schema combining all
 export const resumeSchema = z.object({
-  contactInfo: contactInfoSchema,
+  contactInfo: personalInfoSchema,
   summary: z.string().min(10, "Summary must be at least 10 characters long").max(1000, "Summary too long"),
   skills: z.string().min(1, "At least one skill is required"),
   workExperience: workExperienceSchema,

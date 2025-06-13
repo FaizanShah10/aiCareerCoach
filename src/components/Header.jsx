@@ -4,6 +4,7 @@ import {ChevronDown, FileText, GraduationCap, LayoutDashboard, PenBox, StarsIcon
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import Link from "next/link"
 import { checkUser } from "@/lib/CheckUser"
+import ModeToggle from "./toggle-mode"
 
 
 
@@ -11,11 +12,13 @@ const Header = async () => {
   await checkUser()
   return (
     <>
-      <div className="absolute top-0 left-0 w-full bg-transparent flex items-center justify-between z-50 lg:px-24 md:px-24 px-4 py-4">
+      <div className="fixed top-0 left-0 w-full bg-transparent flex items-center justify-between z-50 lg:px-24 md:px-24 px-4 py-4">
         <div>    
           <h2>Logo</h2>
+          
         </div>
         <div className="flex gap-2">
+          <ModeToggle/>
           <SignedIn>
             <Link href='/industry-insights'>
               <Button >
@@ -34,7 +37,7 @@ const Header = async () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52 bg-black rounded-md h-52 space-y-10 p-2">
                   <DropdownMenuItem asChild>
-                    <Link href="/resume" className="flex items-center">
+                    <Link href="/resumes" className="flex items-center">
                       <FileText className="h-4 w-4" />
                       Build Resume
                     </Link>

@@ -1,6 +1,8 @@
+"use server"
 //2 functions
     //1. A function for generating Ai response -- generateAiIndustryInsights()
     //2. A function for taking that Ai function and setting the industry insights
+
 
 import { db } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
