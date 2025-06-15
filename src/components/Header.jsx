@@ -37,7 +37,7 @@ const Header = async () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52 bg-black rounded-md h-52 space-y-10 p-2">
                   <DropdownMenuItem asChild>
-                    <Link href="/resumes" className="flex items-center">
+                    <Link href="/resume/edit" className="flex items-center">
                       <FileText className="h-4 w-4" />
                       Build Resume
                     </Link>

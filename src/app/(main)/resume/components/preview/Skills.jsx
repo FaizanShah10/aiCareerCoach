@@ -1,4 +1,5 @@
-import React from 'react';
+"use client";
+
 
 const Skills = ({ resumeInfo }) => {
   return (
@@ -12,23 +13,20 @@ const Skills = ({ resumeInfo }) => {
       <hr style={{ borderColor: resumeInfo?.themeColor }} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
-        {resumeInfo?.skills.map((skill, index) => (
-          <div key={index}>
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-xs font-medium text-gray-700">{skill.name}</span>
-              <span className="text-xs text-gray-500">{skill.level}%</span>
-            </div>
-            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+        {
+          Array.isArray(resumeInfo?.skills) && resumeInfo?.skills.length > 0 ? (
+            resumeInfo?.skills.map((skill, index) => (
               <div
-                className="h-full rounded-full"
-                style={{
-                            backgroundColor:resumeInfo?.themeColor,
-                            width: `${skill?.level}%`,
-                        }}
-              />
-            </div>
-          </div>
-        ))}
+                key={index}
+                className="text-xs bg-gray-100 p-2 rounded-md"
+              >
+                {skill}
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-gray-500">No skills listed</p>
+          )
+        }
       </div>
     </div>
   );

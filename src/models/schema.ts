@@ -52,41 +52,77 @@ const personalInfoSchema = z.object({
   websiteUrl: z.string().url("Invalid URL").optional(),
 });
 
+// Summary Schema
+export const summarySchema = z.object({
+  resumeId: z.string().min(1, "Resume ID is required"),
+  summary: z
+    .string()
+    .min(10, "Summary must be at least 10 characters")
+    .max(1000, "Summary must not exceed 1000 characters"),
+})
+
+// Education Schema
+export const educationSchema = z.object({
+  resumeId: z.string().min(1, "Resume ID is required"),
+  instituteName: z.string().min(1, "Institute name is required"),
+  programName: z.string().min(1, "Program name is required"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().optional(),
+})
+
+// Skills Schema
+export const skillsSchema = z.object({
+  resumeId: z.string().min(1, "Resume ID is required"),
+  skills: z
+    .array(z.string().min(1, "Skill cannot be empty"))
+    .min(1, "At least one skill is required"),
+})
+
+// if skills is seperated by comma
+// export const rawSkillsSchema = z.object({
+//   resumeId: z.string(),
+//   skills: z
+//     .string()
+//     .transform((val) =>
+//       val
+//         .split(',')
+//         .map((s) => s.trim())
+//         .filter(Boolean)
+//     )
+// })
+
+// Project Schema
+export const projectSchema = z.object({
+  resumeId: z.string().min(1, "Resume ID is required"),
+  projectName: z.string().min(1, "Project name is required"),
+  projectDescription: z.string().min(1, "Project description is required"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().optional(),
+  liveLink: z
+    .string()
+    .url("Live link must be a valid URL")
+    .optional()
+    .or(z.literal("")), // allows empty string if frontend sends it
+  githubRepo: z
+    .string()
+    .url("GitHub repo must be a valid URL")
+    .optional()
+    .or(z.literal("")),
+})
 
 
 // Work Experience Schema
-const workExperienceSchema = z.array(
-  z.object({
-    title: z.string().min(1, "Title is required"),
-    companyName: z.string().min(1, "Company name is required"),
-    role: z.string().min(1, "Role is required"),
-    description: z.string().min(1, "Description is required"),
-    startDate: z.string(),
-    endDate: z.string().optional(),
-    current: z.boolean().default(false)
-  })
-);
+export const workExperienceSchema = z.object({
+  resumeId: z.string().min(1, "Resume ID is required"),
+  title: z.string().min(1, "Job title is required"),
+  companyName: z.string().min(1, "Company name is required"),
+  role: z.string().min(1, "Role is required"),
+  description: z.string().min(1, "Description is required"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().optional().or(z.literal("")),
+  current: z.boolean().optional().default(false),
+})
 
-// Project Schema
-const projectSchema = z.array(
-  z.object({
-    projectName: z.string().min(1, "Project name is required"),
-    projectDescription: z.string().min(1, "Project description is required"),
-    startDate: z.string(),
-    endDate: z.string().optional(),
-    liveLink: z.string().url("Invalid URL").optional(),
-    githubRepo: z.string().url("Invalid URL").optional(),
-  })
-);
-
-const educationSchema = z.array(
-  z.object({
-    instituteName: z.string().min(1, "Institute name is required"),
-    programName: z.string().min(1, "Program Name is required"),
-    startDate: z.string(),
-    endDate: z.string().optional(),
-  })
-);
 
 // Resume Schema combining all
 export const resumeSchema = z.object({

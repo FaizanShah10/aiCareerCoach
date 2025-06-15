@@ -54,14 +54,73 @@ model Resume {
   phoneNo     String    
   address     String
   jobTitle    String
-  websiteUrl  String?   
+  websiteUrl  String?
+
+  summary     String?   
+  themeColor  String?  
+
   content     String    @db.Text  
   atsScore    Float?
   feedback    String?
 
+  // Relations
+  education   Education[]    
+  work        WorkExperience[] 
+  projects    Project[]     
+  skills      String[]       
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Education model
+model Education {
+  id           String   @id @default(cuid())
+  resumeId     String
+  resume       Resume   @relation(fields: [resumeId], references: [id])
+
+  instituteName String
+  programName   String
+  startDate     String
+  endDate       String?
+
+  createdAt     DateTime @default(now())
+}
+
+// WorkExperience model
+model WorkExperience {
+  id           String   @id @default(cuid())
+  resumeId     String
+  resume       Resume   @relation(fields: [resumeId], references: [id])
+
+  title        String
+  companyName  String
+  role         String
+  description  String
+  startDate    String
+  endDate      String?
+  current      Boolean  @default(false)
+
+  createdAt    DateTime @default(now())
+}
+
+// projects model
+model Project {
+  id               String   @id @default(cuid())
+  resumeId         String
+  resume           Resume   @relation(fields: [resumeId], references: [id])
+
+  projectName      String
+  projectDescription String
+  startDate        String
+  endDate          String?
+  liveLink         String?
+  githubRepo       String?
+
+  createdAt        DateTime @default(now())
+}
+
+
 
 
 model CoverLetter {

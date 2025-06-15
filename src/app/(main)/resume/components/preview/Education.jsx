@@ -1,4 +1,5 @@
-import React from 'react'
+"use client"
+
 
 const Education = ({resumeInfo}) => {
   return (
@@ -12,21 +13,26 @@ const Education = ({resumeInfo}) => {
         borderColor:resumeInfo?.themeColor
     }} />
 
-    {resumeInfo?.education.map((education,index)=>(
-        <div key={index} className='my-5'>
-            <h2 className='text-sm font-bold'
-                style={{
-                    color:resumeInfo?.themeColor
-                }}
-            >{education.universityName}</h2>
-            <h2 className='text-xs flex justify-between'>{education?.degree} in {education?.major}
-            <span>{education?.startDate} - {education?.endDate}</span>
-            </h2>
-            <p className='text-xs my-2'>
-                {education?.description}
-            </p>
-        </div>
-    ))}
+    {
+        Array.isArray(resumeInfo?.education) && resumeInfo?.education?.length > 0 ? (
+            resumeInfo?.education?.map((edu, index) => (
+                <div key={index} className='my-5'>
+                    <h2 className='text-sm font-bold'
+                     style={{
+                        color:resumeInfo?.themeColor
+                    }}>{edu?.degree}</h2>
+                    <h2 className='text-xs flex justify-between'>{edu?.schoolName}, 
+                    {edu?.city}, 
+                    {edu?.state}
+                    <span>{edu?.startDate} To {edu?.currentlyStudying?'Present':edu.endDate} </span>
+                    </h2>
+                    <div className='text-xs my-2' dangerouslySetInnerHTML={{__html:edu?.description}} />
+                </div>
+            ))
+        ) : (
+            <p className='text-xs'>No education information available.</p>
+        )
+    }
 
     </div>
   )

@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import PersonalInfo from './form/PersonalInfo'
+import Summary from './form/Summary'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ArrowRight, Home } from 'lucide-react'
 import Link from 'next/link'
+import Experience from './form/Experience'
 
 
 const ResumeForm = () => {
@@ -36,6 +38,8 @@ const ResumeForm = () => {
           </div>
         </div>
       {activeFormIndex==1 ? <PersonalInfo enabledNext={(value) => setEnableNext(value)}/> : null}
+      {activeFormIndex==2 ? <Summary enabledNext={(value) => setEnableNext(value)}/> : null}
+      {activeFormIndex==3 ? <Experience enabledNext={(value) => setEnableNext(value)}/> : null}
     </div>
   )
 }
