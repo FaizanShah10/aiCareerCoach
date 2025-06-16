@@ -95,8 +95,9 @@ model WorkExperience {
 
   title        String
   companyName  String
-  role         String
-  description  String
+  workSummary  String
+  city         String
+  state        String
   startDate    String
   endDate      String?
   current      Boolean  @default(false)

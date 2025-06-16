@@ -20,7 +20,7 @@ const Header = async () => {
         <div className="flex gap-2">
           <ModeToggle/>
           <SignedIn>
-            <Link href='/industry-insights'>
+            <Link href='/dashboard'>
               <Button >
                 <LayoutDashboard/>
                 <span className="hidden md:block">Industry Insights</span>

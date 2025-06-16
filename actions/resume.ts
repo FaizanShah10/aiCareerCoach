@@ -25,10 +25,11 @@ type Summary = {
 type WorkExperience = {
   title: string,
   companyName: string,
-  role: string,
+  city: string,
+  state: string,
   startDate: string,
   endDate: string,
-  description: string,
+  workSummary: string,
   current: boolean,
 }
 
@@ -197,7 +198,7 @@ export async function generateImprovedSummary(summary: string) {
 }
 
 // Save Work Experience
-export async function saveWorkExperience(){
+export async function saveWorkExperience( workExperience: WorkExperience[]){
   const {userId} = await auth();
   if(!userId) throw new Error("UnAuthorized")
 
@@ -209,8 +210,56 @@ export async function saveWorkExperience(){
 
   if(!user) throw new Error("User not found");
 
+  const resume = await db.resume.findFirst({
+    where: { userId: user.id },
+  });
 
+  if (!resume) throw new Error("No resume found for this user");
 
+  try {
+    await db.workExperience.createMany({
+      data: workExperience.map((experience) => ({
+        resumeId: resume.id,
+        title: experience.title,
+        companyName: experience.companyName,
+        startDate: experience.startDate,
+        endDate: experience.endDate,
+        city: experience.city,
+        state: experience.state,
+        workSummary: experience.workSummary,
+        current: experience.current,
+      }))
+    })
+  } catch (error) {
+    console.error("Failed to save work experience:", error);
+    throw new Error("Failed to save work experience");
+  }
+
+}
+
+// get work experience
+export async function getWorkExperience(){
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const resume = await db.resume.findFirst({
+    where: { userId: user.id },
+  });
+
+  if (!resume) throw new Error("No resume found for this user");
+
+  const workExperience = await db.workExperience.findMany({
+    where: { resumeId: resume.id },
+    orderBy: { startDate: "desc" }, // Order by start date, most recent first
+  });
+
+  return workExperience;
 }
 
 // get resume by Id
@@ -246,6 +295,11 @@ export async function getCurrentResume() {
 
   const resume = await db.resume.findFirst({
     where: { userId: user.id },
+    include: {
+      education: true,
+      work: true,
+      projects: true,
+    }
   });
 
   if (!resume) throw new Error("No resume found for this user");

@@ -29,6 +29,7 @@ const ResumeEditPage = () => {
     fetchResume()
   }, [])
 
+
   if (loading || !resumeInfo) {
     return (
       <div className='flex justify-center items-center h-screen'>
