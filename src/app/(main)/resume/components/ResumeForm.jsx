@@ -1,12 +1,15 @@
 "use client"
 
 import { useState } from 'react'
-import PersonalInfo from './form/PersonalInfo'
-import Summary from './form/Summary'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ArrowRight, Home } from 'lucide-react'
 import Link from 'next/link'
+
+import PersonalInfo from './form/PersonalInfo'
+import Summary from './form/Summary'
 import Experience from './form/Experience'
+import Education from './form/Education'
+import Skills from './form/Skills'
 
 
 const ResumeForm = () => {
@@ -40,6 +43,8 @@ const ResumeForm = () => {
       {activeFormIndex==1 ? <PersonalInfo enabledNext={(value) => setEnableNext(value)}/> : null}
       {activeFormIndex==2 ? <Summary enabledNext={(value) => setEnableNext(value)}/> : null}
       {activeFormIndex==3 ? <Experience enabledNext={(value) => setEnableNext(value)}/> : null}
+      {activeFormIndex==4 ? <Education enabledNext={(value) => setEnableNext(value)}/> : null}
+      {activeFormIndex==5 ? <Skills enabledNext={(value) => setEnableNext(value)}/> : null}
     </div>
   )
 }

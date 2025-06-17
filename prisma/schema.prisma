@@ -80,6 +80,7 @@ model Education {
   resume       Resume   @relation(fields: [resumeId], references: [id])
 
   instituteName String
+  degree        String
   programName   String
   startDate     String
   endDate       String?

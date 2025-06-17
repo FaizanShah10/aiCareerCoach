@@ -33,6 +33,14 @@ type WorkExperience = {
   current: boolean,
 }
 
+type Education = {
+  instituteName:string,
+  degree: string,
+  programName:string,
+  startDate:string,
+  endDate:string
+}
+
 // Save PersonalInfoData
 export async function savePersonalInfo(formData: PersonalInfo) {
   const { userId: clerkUserId } = await auth();
@@ -237,50 +245,42 @@ export async function saveWorkExperience( workExperience: WorkExperience[]){
 
 }
 
-// get work experience
-export async function getWorkExperience(){
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+// save Education
+export async function saveEducation(education: Education[]){
+    try {
+      const {userId} = await auth();
+      if(!userId) throw new Error("UnAuthorized")
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
+      const user = await db.user.findUnique({
+        where: {
+          clerkUserId: userId,
+        }
+      })
 
-  if (!user) throw new Error("User not found");
+      if(!user) throw new Error("User not found");
 
-  const resume = await db.resume.findFirst({
-    where: { userId: user.id },
-  });
+      const resume = await db.resume.findFirst({
+        where: { userId: user.id },
+      });
 
-  if (!resume) throw new Error("No resume found for this user");
+      if (!resume) throw new Error("No resume found for this user");
 
-  const workExperience = await db.workExperience.findMany({
-    where: { resumeId: resume.id },
-    orderBy: { startDate: "desc" }, // Order by start date, most recent first
-  });
-
-  return workExperience;
+      await db.education.createMany({
+        data: education.map((education) => ({
+          resumeId: resume.id,
+          instituteName: education.instituteName,
+          degree: education.degree,
+          programName: education.programName,
+          startDate: education.startDate,
+          endDate: education.endDate,
+        }))
+      })
+    } catch (error: any) {
+      console.log("Error Creating Education", error.message)
+      throw new Error("Error Creating Education")
+    }
 }
 
-// get resume by Id
-export async function getResumeById(resumeId: string) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  const resume = await db.resume.findUnique({
-    where: { id: resumeId, userId: user.id },
-  });
-
-  if (!resume) throw new Error("Resume not found");
-
-  return resume;
-}
 
 // get Current Resume
 export async function getCurrentResume() {

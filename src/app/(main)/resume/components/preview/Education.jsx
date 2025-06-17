@@ -16,17 +16,15 @@ const Education = ({resumeInfo}) => {
     {
         Array.isArray(resumeInfo?.education) && resumeInfo?.education?.length > 0 ? (
             resumeInfo?.education?.map((edu, index) => (
-                <div key={index} className='my-5'>
+                <div key={index} className='my-5 text-left'>
                     <h2 className='text-sm font-bold'
                      style={{
                         color:resumeInfo?.themeColor
                     }}>{edu?.degree}</h2>
-                    <h2 className='text-xs flex justify-between'>{edu?.schoolName}, 
-                    {edu?.city}, 
-                    {edu?.state}
+                    <span className="font-semibold">{edu.degree} in {edu.programName}</span>  
+                    <h2 className='text-xs flex justify-between'>{edu?.instituteName}, 
                     <span>{edu?.startDate} To {edu?.currentlyStudying?'Present':edu.endDate} </span>
                     </h2>
-                    <div className='text-xs my-2' dangerouslySetInnerHTML={{__html:edu?.description}} />
                 </div>
             ))
         ) : (
