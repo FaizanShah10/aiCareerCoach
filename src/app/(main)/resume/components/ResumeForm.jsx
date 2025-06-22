@@ -27,7 +27,7 @@ const ResumeForm = () => {
     <div>
         <div className='flex justify-between items-center mb-3'>
           <div className='flex gap-5'>
-            <Link href={"/dashboard"}>
+            <Link href={"/"}>
           <Button><Home/></Button>
           </Link>
           {/* <ThemeColor/> */}
@@ -35,7 +35,8 @@ const ResumeForm = () => {
           </div>
           <div className='flex gap-2'>
             {activeFormIndex>1
-            &&<Button size="sm" 
+            &&
+            <Button size="sm" 
             onClick={()=>setActiveFormIndex(activeFormIndex-1)}> <ArrowLeft/> </Button> }
             <Button 
             disabled={!enableNext}
@@ -45,11 +46,11 @@ const ResumeForm = () => {
             <ArrowRight/> </Button>
           </div>
         </div>
-      {activeFormIndex==1 ? <PersonalInfo enabledNext={(value) => setEnableNext(value)}/> : null}
-      {activeFormIndex==2 ? <Summary enabledNext={(value) => setEnableNext(value)}/> : null}
-      {activeFormIndex==3 ? <Experience enabledNext={(value) => setEnableNext(value)}/> : null}
-      {activeFormIndex==4 ? <Education enabledNext={(value) => setEnableNext(value)}/> : null}
-      {activeFormIndex==5 ? <Skills enabledNext={(value) => setEnableNext(value)}/> : null}
+        {activeFormIndex==1 ? <PersonalInfo enabledNext={(value) => setEnableNext(value)}/> : null}
+        {activeFormIndex==2 ? <Summary enabledNext={(value) => setEnableNext(value)}/> : null}
+        {activeFormIndex==3 ? <Experience enabledNext={(value) => setEnableNext(value)}/> : null}
+        {activeFormIndex==4 ? <Education enabledNext={(value) => setEnableNext(value)}/> : null}
+        {activeFormIndex==5 ? <Skills enabledNext={(value) => setEnableNext(value)}/> : null}
         {activeFormIndex==6 && <ViewResume resumeInfo={resumeInfo}/>}
     </div>
   )

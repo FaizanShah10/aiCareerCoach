@@ -12,7 +12,7 @@ const Header = async () => {
   await checkUser()
   return (
     <>
-      <div className="fixed top-0 left-0 w-full bg-transparent flex items-center justify-between z-50 lg:px-24 md:px-24 px-4 py-4">
+      <div className="fixed top-0 left-0 w-full bg-black flex items-center justify-between z-50 lg:px-24 md:px-24 py-4">
         <div>    
           <h2 className="text-2xl font-bold">Job Sensei</h2>
         </div>
@@ -34,7 +34,7 @@ const Header = async () => {
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52 bg-black rounded-md h-52 space-y-10 p-2">
+                <DropdownMenuContent align="end" className="w-52 bg-black rounded-md h-auto space-y-4 p-2">
                   <DropdownMenuItem asChild>
                     <Link href="/resume/edit" className="flex items-center">
                       <FileText className="h-4 w-4" />
@@ -50,12 +50,7 @@ const Header = async () => {
                       Cover Letter
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/interview" className="flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4" />
-                      Interview Prep
-                    </Link>
-                  </DropdownMenuItem>
+                  
                 </DropdownMenuContent>
               </DropdownMenu>
            

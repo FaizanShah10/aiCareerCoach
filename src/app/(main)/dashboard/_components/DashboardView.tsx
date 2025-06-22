@@ -24,14 +24,14 @@ import { Badge } from "@/components/ui/badge";
 import {
   BarChart,
   Bar,
-  Rectangle,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
+
+
 
 const DashboardView = ({ insights }: any) => {
   const salaryData = insights.salaryRanges.map((data: any) => ({
@@ -88,6 +88,7 @@ const DashboardView = ({ insights }: any) => {
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {/* Market Outlook */}
         <Card>
           <CardHeader>
             <div className="flex justify-between">
@@ -105,6 +106,7 @@ const DashboardView = ({ insights }: any) => {
           </CardContent>
         </Card>
 
+        {/* Industry Growth  */}
         <Card>
           <CardHeader>
             <div className="flex justify-between">
@@ -122,6 +124,8 @@ const DashboardView = ({ insights }: any) => {
           </CardContent>
         </Card>
 
+
+        {/* Demand Level */}
         <Card>
           <CardHeader>
             <div className="flex justify-between">
@@ -141,6 +145,8 @@ const DashboardView = ({ insights }: any) => {
           </CardContent>
         </Card>
 
+
+        {/* Top Skills */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Top Skills</CardTitle>

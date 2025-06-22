@@ -24,7 +24,7 @@ const page = () => {
                     <p className="text-muted-foreground">
                       {feature.description}
                     </p>
-                  </div>
+                  </div>  
                 </CardContent>
               </Card>
             ))}

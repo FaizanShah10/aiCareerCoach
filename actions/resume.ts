@@ -338,7 +338,7 @@ export async function getCurrentResume() {
       work: true,
       projects: true,
       skills: true
-    }
+      }
   });
 
   if (!resume) throw new Error("No resume found for this user");

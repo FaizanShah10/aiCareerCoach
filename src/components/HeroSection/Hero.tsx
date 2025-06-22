@@ -9,10 +9,7 @@ export default function Home() {
       <Image
         src={Banner1}
         alt="AI Career Coach"
-        layout="fill"
-        objectFit="cover"
-        quality={100}
-        priority
+        objectFit="cover"        
       />
 
       {/* Text Overlay */}

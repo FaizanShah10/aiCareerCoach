@@ -32,14 +32,6 @@ export const onBoardingSchema = z.object({
             )
 })
 
-// Contact Information Schema
-// const contactInfoSchema = z.object({
-//   email: z.string().email("Invalid email address"),
-//   mobileNumber: z.string().min(10, "Invalid mobile number").max(15, "Invalid mobile number"),
-//   linkedIn: z.string().url("Invalid URL").optional(),
-//   githubProfile: z.string().url("Invalid URL").optional(),
-// });
-
 
 // Personal Info Schema
 const personalInfoSchema = z.object({

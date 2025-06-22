@@ -34,6 +34,7 @@ const PersonalInfo = ({enabledNext}) => {
   try {
     await savePersonalInfo(resumeInfo)
     toast.success("Resume saved successfully")
+    enabledNext(true)
   } catch (error) {
     console.error(error)
     toast.error("Failed to save resume")
@@ -54,12 +55,13 @@ const PersonalInfo = ({enabledNext}) => {
             <div className='grid grid-cols-2 mt-5 gap-3'>
                 <div>
                     <label className='text-sm'>First Name</label>
-                    <Input 
-                    name="firstName" 
-                    value={resumeInfo?.firstName || ''}
-                    placeholder={resumeInfo?.firstName} 
-                    required 
-                    onChange={handleInputChange}/>
+                    <Input
+                    name="firstName"
+                    value={resumeInfo.firstName || ''}
+                    placeholder='Enter your first name'
+                    onChange={handleInputChange}
+                    required
+                    />
                 </div>
                 <div>
                     <label className='text-sm'>Last Name</label>
@@ -73,7 +75,7 @@ const PersonalInfo = ({enabledNext}) => {
                     <Input name="jobTitle" required 
                     value={resumeInfo?.jobTitle || ''}
                     placeholder={resumeInfo?.jobTitle}
-                                         onChange={handleInputChange} />
+                    onChange={handleInputChange} />
                 </div>
                 <div className='col-span-2'>
                     <label className='text-sm'>Address</label>
@@ -110,7 +112,7 @@ const PersonalInfo = ({enabledNext}) => {
                 <Button type="submit"
                 disabled={loading}>
                     {loading?<LoaderCircle className='animate-spin' />:'Save'}
-                    </Button>
+                </Button>
             </div>
         </form>
     </div>

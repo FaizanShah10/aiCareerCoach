@@ -18,9 +18,6 @@ const Dashboard = async () => {
   return (
     <div>
       <DashboardView insights={insights}/>
-      
-      
-
     </div>
   )
 }

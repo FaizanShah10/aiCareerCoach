@@ -50,7 +50,7 @@ export async function updateUser(data: any) {
                     }
                 });
 
-                return { updatedUser, industryInsights };
+                return { success: true, updatedUser, industryInsights };
             },
             { timeout: 10000 }
         );

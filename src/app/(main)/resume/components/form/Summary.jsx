@@ -44,12 +44,13 @@ const Summary = ({ enabledNext }) => {
         ...prev,
         summary: response.summary
       }))
-      setloadingImprovedSummary(false)
       toast.success('Summary generated successfully')
       enabledNext(true)
     } catch (error) {
       toast.error('Failed to generate summary')
       console.error('Error generating summary:', error) 
+    } finally {
+      setloadingImprovedSummary(false)
     }
   }
 

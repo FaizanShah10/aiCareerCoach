@@ -12,6 +12,8 @@ const levelLabels = {
 
 const Skills = ({ resumeInfo }) => {
 
+  console.log(resumeInfo)
+
   
   const renderStars = (rating) => {
   const count = parseInt(rating, 10);

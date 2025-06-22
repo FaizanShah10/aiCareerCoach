@@ -3,7 +3,6 @@
 function PersonalDetailPreview({resumeInfo}) {
 
     
-    
   return (
     <div>
         <h2 className='font-bold text-xl text-center'
@@ -23,7 +22,7 @@ function PersonalDetailPreview({resumeInfo}) {
             <h2 className='font-normal text-xs'
              style={{
                 color:resumeInfo?.themeColor
-            }}>{resumeInfo?.phone}</h2>
+            }}>{resumeInfo?.phoneNo}</h2>
             <h2 className='font-normal text-xs'
              style={{
                 color:resumeInfo?.themeColor

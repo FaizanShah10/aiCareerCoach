@@ -28,6 +28,8 @@ const ResumeEditPage = () => {
 
     fetchResume()
   }, [])
+  
+
 
 
   if (loading || !resumeInfo) {
