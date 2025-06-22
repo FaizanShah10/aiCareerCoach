@@ -67,7 +67,7 @@ model Resume {
   education   Education[]    
   work        WorkExperience[] 
   projects    Project[]     
-  skills      String[]       
+  skills      Skill[]       
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -106,6 +106,18 @@ model WorkExperience {
   createdAt    DateTime @default(now())
 }
 
+// Skills Schema
+model Skill{
+  id            String    @id @default(cuid())
+  resumeId      String
+  resume        Resume    @relation(fields: [resumeId], references: [id])
+
+  name          String
+  level         String
+
+  createdAt     DateTime @default(now())
+}
+
 // projects model
 model Project {
   id               String   @id @default(cuid())
@@ -121,8 +133,6 @@ model Project {
 
   createdAt        DateTime @default(now())
 }
-
-
 
 
 model CoverLetter {

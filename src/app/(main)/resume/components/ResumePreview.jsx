@@ -7,6 +7,7 @@ import Summary from "./preview/Summary"
 import Experience from "./preview/Experience"
 import Education from "./preview/Education"
 import Skills from "./preview/Skills"
+import ViewResume from '../components/ViewResume'
 
 const ResumePreview = () => {
   const { resumeInfo } = useContext(ResumeInfoContext)

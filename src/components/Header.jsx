@@ -14,8 +14,7 @@ const Header = async () => {
     <>
       <div className="fixed top-0 left-0 w-full bg-transparent flex items-center justify-between z-50 lg:px-24 md:px-24 px-4 py-4">
         <div>    
-          <h2>Logo</h2>
-          
+          <h2 className="text-2xl font-bold">Job Sensei</h2>
         </div>
         <div className="flex gap-2">
           <ModeToggle/>

@@ -41,6 +41,11 @@ type Education = {
   endDate:string
 }
 
+type Skills = {
+  name: string,
+  level: string
+}
+
 // Save PersonalInfoData
 export async function savePersonalInfo(formData: PersonalInfo) {
   const { userId: clerkUserId } = await auth();
@@ -281,6 +286,39 @@ export async function saveEducation(education: Education[]){
     }
 }
 
+// save Skills
+export async function saveSkills(skills: Skills[]){
+  try {
+    const {userId} = await auth();
+      if(!userId) throw new Error("UnAuthorized")
+
+      const user = await db.user.findUnique({
+        where: {
+          clerkUserId: userId,
+        }
+      })
+
+      if(!user) throw new Error("User not found");
+
+      const resume = await db.resume.findFirst({
+        where: { userId: user.id },
+      });
+
+      if (!resume) throw new Error("No resume found for this user");
+
+      await db.skill.createMany({
+        data: skills.map((skill) => ({
+          resumeId: resume.id,
+          name: skill.name,
+          level: skill.level
+        }))
+      })
+  } catch (error: any) {
+    console.log("Error Creating Skills", error.message)
+    throw new Error("Error Creating Skills")
+  }
+}
+
 
 // get Current Resume
 export async function getCurrentResume() {
@@ -299,6 +337,7 @@ export async function getCurrentResume() {
       education: true,
       work: true,
       projects: true,
+      skills: true
     }
   });
 

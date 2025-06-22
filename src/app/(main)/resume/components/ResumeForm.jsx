@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ArrowRight, Home } from 'lucide-react'
 import Link from 'next/link'
@@ -10,6 +10,8 @@ import Summary from './form/Summary'
 import Experience from './form/Experience'
 import Education from './form/Education'
 import Skills from './form/Skills'
+import ViewResume from './ViewResume'
+import { ResumeInfoContext } from '../../../../context/ResumeInfoContext'
 
 
 const ResumeForm = () => {
@@ -17,6 +19,9 @@ const ResumeForm = () => {
   const [activeFormIndex, setActiveFormIndex] = useState(1)
   const [enableNext, setEnableNext] = useState(true)
 
+  const {resumeInfo} = useContext(ResumeInfoContext)
+
+  if(!resumeInfo) return null
 
   return (
     <div>
@@ -45,6 +50,7 @@ const ResumeForm = () => {
       {activeFormIndex==3 ? <Experience enabledNext={(value) => setEnableNext(value)}/> : null}
       {activeFormIndex==4 ? <Education enabledNext={(value) => setEnableNext(value)}/> : null}
       {activeFormIndex==5 ? <Skills enabledNext={(value) => setEnableNext(value)}/> : null}
+        {activeFormIndex==6 && <ViewResume resumeInfo={resumeInfo}/>}
     </div>
   )
 }

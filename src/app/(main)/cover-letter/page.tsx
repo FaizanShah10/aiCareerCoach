@@ -15,7 +15,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { generateCoverLetter } from "../../../../actions/coverletter";
-import useFetch from "../../../../hooks/useFetch";
+import { toast } from "sonner";
+import { useState } from "react";
+import test from "node:test";
 
 const page = () => {
   const {
@@ -24,17 +26,23 @@ const page = () => {
     formState: { errors },
   } = useForm();
 
-  const {
-    data,
-    loading,
-    error,
-    fn: generateFn,
-  } = useFetch(generateCoverLetter);
+
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState("")
+
 
   const onSubmit = async (data: any) => {
-    // console.log(data.role)
-    // console.log(data.description)
-    await generateFn(data.role, data.description);
+    try {
+      setLoading(true)
+      const text = await generateCoverLetter(data.role, data.description)
+      setResult(text)
+      // console.log(text)
+      toast.success("Cover Letter generated!")
+      setLoading(false)
+      // await (data.role, data.description)
+    } catch (error) {
+      toast.error("Error generating Cover Leter, try Again!")
+    }
     
   };
 
@@ -54,7 +62,6 @@ const page = () => {
       <Card>
         <CardHeader>
           <CardTitle>Job Details</CardTitle>
-          <CardDescription></CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col lg:flex-row gap-10">
@@ -83,9 +90,6 @@ const page = () => {
                   {loading ? "Generating..." : "Generate Cover Letter"}
                 </Button>
               </div>
-              {error && (
-                <p className="text-center text-red-700 text-sm">{error}</p>
-              )}
             </form>
 
             {/* Generated Result Section */}
@@ -94,7 +98,7 @@ const page = () => {
                 Generated Cover Letter
               </h3>
               <p className="whitespace-pre-wrap">
-                {data || "Your generated letter will appear here."}
+                {result || "Your generated letter will appear here."}
               </p>
             </div>
           </div>

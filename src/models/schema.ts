@@ -78,18 +78,8 @@ export const skillsSchema = z.object({
     .min(1, "At least one skill is required"),
 })
 
-// if skills is seperated by comma
-// export const rawSkillsSchema = z.object({
-//   resumeId: z.string(),
-//   skills: z
-//     .string()
-//     .transform((val) =>
-//       val
-//         .split(',')
-//         .map((s) => s.trim())
-//         .filter(Boolean)
-//     )
-// })
+
+
 
 // Project Schema
 export const projectSchema = z.object({

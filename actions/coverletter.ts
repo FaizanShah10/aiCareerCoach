@@ -30,6 +30,8 @@ export const generateCoverLetter = async (role: any, description: any) => {
             --> Maintains a professional tone while sounding human and authentic.
             --> Is structured properly with a strong introduction, a detailed body, and a concise closing paragraph.
             --> Avoids repetition and generic phrases.
+
+           
         `;
 
         const result = await model.generateContent(prompt)
