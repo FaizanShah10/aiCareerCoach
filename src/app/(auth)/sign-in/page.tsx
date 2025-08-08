@@ -99,6 +99,7 @@ export default function CustomSignIn() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 className="pl-10 bg-white/30 text-white placeholder-white rounded-xl"
+                autoComplete="new-password"
               />
               <span onClick={togglePassword} className="absolute right-3 cursor-pointer">
                 <Eye size={16} />

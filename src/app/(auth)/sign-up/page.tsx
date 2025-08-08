@@ -83,18 +83,18 @@ export default function CustomSignUp() {
       });
 
       const result = await dbResponse.json();
-      console.log("👤 User creation response:", result);
+      // console.log(User creation response:", result);
 
       if (result.status === "error") {
         toast.error("User DB creation failed: " + result.message);
       }
 
-      router.push("/");
+      router.push("/onboarding");
     } else {
       toast.error("Could not complete Verification, try again!");
     }
   } catch (error: any) {
-    console.error("❌ Verification error:", error);
+    console.error("Verification error:", error);
     setError(error.errors?.[0]?.message || "Verification failed");
   }
 };
@@ -188,6 +188,7 @@ export default function CustomSignUp() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="pl-10 bg-white/30 text-black placeholder-black rounded-xl"
+              autoComplete="new-password"
             />
             <span onClick={handlePasswordToggle} className="absolute right-3 cursor-pointer"><Eye size={16}/></span>
             </div>
