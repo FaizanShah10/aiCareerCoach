@@ -2,64 +2,103 @@
 
 
 import { db } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
-import { userAgent } from "next/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { generateAiIndustryInsights } from "./industryInsights";
 
-export async function updateUser(data: any) {
-    const { userId } = await auth();
-    if (!userId) {
-        throw new Error("Unauthorized");
-    }
 
-    const user = await db.user.findUnique({
-        where: { clerkUserId: userId }
+export async function createUserInDB() {
+  try {
+    const user = await currentUser();
+
+    if (!user) throw new Error("User not authenticated");
+
+    // Check if already exists
+    const exists = await db.user.findUnique({
+      where: { clerkUserId: user.id },
     });
 
-    if (!user) {
-        throw new Error("User Not Found");
+    if (exists) return { status: "exists", user: exists };
+
+    const newUser = await db.user.create({
+      data: {
+        clerkUserId: user.id,
+        email: user.emailAddresses[0]?.emailAddress || "",
+        name: user.username || "",
+        imageUrl: user.imageUrl || null,
+      },
+    });
+
+    return { status: "created", user: newUser };
+  } catch (err: any) {
+    console.error("❌ createUserInDB error:", err.message);
+    return { status: "error", message: err.message };
+  }
+}
+
+export async function updateUser(data: any) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const formattedIndustry = data.subIndustry
+    ? `${data.industry}-${data.subIndustry.toLowerCase().replace(/ /g, "-")}`
+    : data.industry;
+
+  if (!formattedIndustry) throw new Error("Industry is required");
+
+  try {
+    let industryInsights = await db.industryInsight.findUnique({
+      where: { industry: formattedIndustry },
+    });
+
+    if (!industryInsights) {
+      const insights = await generateAiIndustryInsights(formattedIndustry);
+
+      const result = await db.$transaction(async (tx) => {
+        const createdInsight = await tx.industryInsight.create({
+          data: {
+            industry: formattedIndustry,
+            ...insights,
+            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          },
+        });
+
+        const updatedUser = await tx.user.update({
+          where: { id: user.id },
+          data: {
+            industry: formattedIndustry,
+            experience: data.experience,
+            bio: data.bio,
+            skills: data.skills,
+          },
+        });
+
+        return { success: true, updatedUser, industryInsights: createdInsight };
+      });
+
+      return result;
     }
 
-    try {
-        const result = await db.$transaction(
-            async (elem) => {
-                let industryInsights = await elem.industryInsight.findUnique({
-                    where: { industry: data.industry }
-                });
+    const updatedUser = await db.user.update({
+      where: { id: user.id },
+      data: {
+        industry: formattedIndustry,
+        experience: data.experience,
+        bio: data.bio,
+        skills: data.skills,
+      },
+    });
 
-                if (!industryInsights) {
-                    // Generate AI-based insights if none exist
-                    const insights = await generateAiIndustryInsights(data?.industry);
-                    industryInsights = await elem.industryInsight.create({
-                        data: {
-                            industry: data?.industry,
-                            ...insights,
-                            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-                        }
-                    });
-                }
-
-                // Updating user details
-                const updatedUser = await elem.user.update({
-                    where: { id: user.id },
-                    data: {
-                        industry: data.industry,
-                        experience: data.experience,
-                        bio: data.bio,
-                        skills: data.skills
-                    }
-                });
-
-                return { success: true, updatedUser, industryInsights };
-            },
-            { timeout: 10000 }
-        );
-
-        return result; 
-    } catch (error: any) {
-        console.error("Error updating industry insights and user:", error.message);
-        throw new Error("Failed to update Profile");
-    }
+    return { success: true, updatedUser, industryInsights };
+  } catch (error: any) {
+    console.error("Error updating user:", error.message);
+    throw new Error("Failed to update profile");
+  }
 }
 
 

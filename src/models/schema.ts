@@ -1,6 +1,38 @@
 import { title } from 'process';
 import {string, z} from 'zod'
 
+export const userSignUpSchema = z.object({
+  username: z
+  .string()
+  .min(3, "Username must be 3 characters long")
+  .max(15, "Username cannot exceed 15 chracters")
+  .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
+
+  email: z.string().email("Enter a valid Email address"),
+
+  password: z
+  .string()
+  .min(8)
+  .regex(/[a-z]/, "Password must contain a lowercase character")
+  .regex(/[A-Z]/, "Password must contain an uppercase character")
+  .regex(/[0-9]/, "Password must contain a number")
+  .regex(/[^a-zA-Z0-9]/, "Password must contain a special character")
+})
+
+export const userSignInSchema = z.object({
+
+  email: z.string().email("Enter a valid Email address"),
+
+  password: z
+  .string()
+  .min(8)
+  .regex(/[a-z]/, "Password must contain a lowercase character")
+  .regex(/[A-Z]/, "Password must contain an uppercase character")
+  .regex(/[0-9]/, "Password must contain a number")
+  .regex(/[^a-zA-Z0-9]/, "Password must contain a special character")
+})
+
+
 export const onBoardingSchema = z.object({
     industry: z.string({
         required_error: "Please enter an industry"

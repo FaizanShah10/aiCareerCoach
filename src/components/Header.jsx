@@ -3,19 +3,20 @@ import { Button } from "./ui/button"
 import {ChevronDown, FileText, GraduationCap, LayoutDashboard, PenBox, StarsIcon } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import Link from "next/link"
-import { checkUser } from "@/lib/CheckUser"
 import ModeToggle from "./toggle-mode"
 
 
 
 const Header = async () => {
-  await checkUser()
+  
   return (
     <>
-      <div className="fixed top-0 left-0 w-full bg-black flex items-center justify-between z-50 lg:px-24 md:px-24 py-4">
+      <div className="fixed top-0 left-0 w-full bg-transparent flex items-center justify-between px-4 z-50 lg:px-24 md:px-24 py-4">
+        <Link href='/'>
         <div>    
           <h2 className="text-2xl font-bold">Job Sensei</h2>
         </div>
+        </Link>
         <div className="flex gap-2">
           <ModeToggle/>
           <SignedIn>
@@ -50,15 +51,26 @@ const Header = async () => {
                       Cover Letter
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/roadmap"
+                      className="flex items-center gap-2"
+                    >
+                      <PenBox className="h-4 w-4" />
+                      Roadmap Generation
+                    </Link>
+                  </DropdownMenuItem>
                   
                 </DropdownMenuContent>
               </DropdownMenu>
            
           </SignedIn>
             <SignedOut>
-              <Button className="bg-black text-white border border-gray-50 hover:text-black">
-                <SignInButton />
+              <Link href="/sign-in">
+                <Button className="bg-black text-white border border-gray-50 hover:text-black">
+                Sign in
               </Button>
+              </Link>
             </SignedOut>
             <SignedIn>
               <UserButton 
