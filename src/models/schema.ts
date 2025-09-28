@@ -1,5 +1,4 @@
-import { title } from 'process';
-import {string, z} from 'zod'
+import { z } from 'zod'
 
 export const userSignUpSchema = z.object({
   username: z

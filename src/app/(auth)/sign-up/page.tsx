@@ -8,98 +8,90 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
-import { tree } from "next/dist/build/templates/app-page";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
-import { userSignUpSchema } from "@/models/schema";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-
-
+import { userSignUpSchema } from "@/models/schema";
 
 export default function CustomSignUp() {
   const { isLoaded, signUp } = useSignUp();
+  const { setActive } = useClerk();
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [type, setType] = useState('password')
+  const [type, setType] = useState<"text" | "password">("password");
   const [error, setError] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [isVerificationSent, setIsVerificationSent] = useState(false);
-  const router = useRouter();
 
-  const { setActive } = useClerk();
-
-  const handlePasswordToggle = () => {
-    if(type === 'password'){
-      setType('text')
-    } else {
-      setType('password')
-    }
-  }
+  const handlePasswordToggle = () =>
+    setType((prev) => (prev === "password" ? "text" : "password"));
 
   const handleSignUp = async () => {
     setError("");
     if (!isLoaded) return;
 
-    const formData = {username, email, password} 
+    const formData = { username, email, password };
+    const dataValidation = userSignUpSchema.safeParse(formData);
 
-    const dataValidation = userSignUpSchema.safeParse(formData)
-
-    if(!dataValidation.success){
-      // If the data is not validate then take the first error we get starting from top and show it
-      const firstError = dataValidation.error.errors[0]?.message
-      setError(firstError)
-      toast.error(firstError)
+    if (!dataValidation.success) {
+      const firstError = dataValidation.error.errors[0]?.message;
+      setError(firstError);
+      toast.error(firstError);
+      return; 
     }
 
     try {
-      await signUp.create({ emailAddress: email, password, username });
+      await signUp.create({
+        emailAddress: email,
+        password,
+        username,
+      });
+
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setIsVerificationSent(true);
-      toast.info("Verification Code Sent to Email!")
+      toast.info("Verification code sent to your email!");
     } catch (err: any) {
-      setError(err.errors?.[0]?.message || "Sign-up failed");
+      const msg =
+        err?.errors?.[0]?.message || "Sign-up failed. Please try again.";
+      setError(msg);
+      toast.error(msg);
     }
   };
 
   const handleVerifyCode = async () => {
-  try {
-    setError("");
+    try {
+      setError("");
 
-    const verificationResult = await signUp?.attemptEmailAddressVerification({
-      code: verificationCode,
-    });
-
-    if (verificationResult?.status === "complete") {
-      await setActive({ session: verificationResult.createdSessionId });
-
-      toast.success("Email Verified Successfully!");
-
-      // ✅ Now create user in DB
-      const dbResponse = await fetch("/api/create-user", {
-        method: "POST",
+      const verificationResult = await signUp?.attemptEmailAddressVerification({
+        code: verificationCode,
       });
 
-      const result = await dbResponse.json();
-      // console.log(User creation response:", result);
+      if (verificationResult?.status === "complete") {
+        await setActive({ session: verificationResult.createdSessionId });
+        toast.success("Email verified successfully!");
 
-      if (result.status === "error") {
-        toast.error("User DB creation failed: " + result.message);
+        // Create user in DB
+        const dbResponse = await fetch("/api/create-user", { method: "POST" });
+        const result = await dbResponse.json();
+
+        if (result.status === "error") {
+          toast.error("User DB creation failed: " + result.message);
+        }
+
+        router.push("/onboarding");
+      } else {
+        toast.error("Incorrect or expired verification code. Try again.");
       }
-
-      router.push("/onboarding");
-    } else {
-      toast.error("Could not complete Verification, try again!");
+    } catch (err: any) {
+      const msg =
+        err?.errors?.[0]?.message || "Verification failed. Try again.";
+      setError(msg);
+      toast.error(msg);
     }
-  } catch (error: any) {
-    console.error("Verification error:", error);
-    setError(error.errors?.[0]?.message || "Verification failed");
-  }
-};
-
-
+  };
 
   const handleGoogleSignUp = async () => {
     if (!isLoaded) return;
@@ -111,7 +103,10 @@ export default function CustomSignUp() {
         redirectUrlComplete: "/",
       });
     } catch (err: any) {
-      setError(err.errors?.[0]?.message || "Google sign-up failed");
+      const msg =
+        err?.errors?.[0]?.message || "Google sign-up failed. Try again.";
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -131,81 +126,82 @@ export default function CustomSignUp() {
           variant="outline"
           className="w-full mb-4 rounded-xl text-white border-white hover:bg-white/10"
         >
-          <span>
-            <FcGoogle />
-          </span>
+          <FcGoogle className="mr-2" />
           Continue with Google
         </Button>
 
-        {/* Username */}
-        <div className="mb-2">
-          <Label htmlFor="username" className="text-white">
-            Username
-          </Label>
-          <div className="relative">
-            <FiUser className="absolute top-2.5 left-3 text-white text-md" />
-            <Input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-              className="pl-10 bg-white/30 text-black placeholder-black rounded-xl"
-            />
-          </div>
-        </div>
-
-        {/* Email */}
-        <div className="mb-2">
-          <Label htmlFor="email" className="text-white">
-            Email
-          </Label>
-          <div className="relative">
-            <FiAtSign className="absolute top-2.5 left-3 text-white text-md" />
-            <Input
-              id="email"
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="pl-10 bg-white/30 text-black placeholder-black rounded-xl"
-            />
-          </div>
-        </div>
-
-        {/* Password */}
-        <div className="mb-4">
-          <Label htmlFor="password" className="text-white">
-            Password
-          </Label>
-          <div className="relative">
-            <FiLock className="absolute top-2.5 left-3 text-white text-md" />
-            <div className="flex items-center justify-between">
-              <Input
-              id="password"
-              type={type}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="pl-10 bg-white/30 text-black placeholder-black rounded-xl"
-              autoComplete="new-password"
-            />
-            <span onClick={handlePasswordToggle} className="absolute right-3 cursor-pointer"><Eye size={16}/></span>
-            </div>
-            
-          </div>
-        </div>
-
-        {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-
-        {/* Sign Up Button */}
         {!isVerificationSent ? (
-          <Button
-            onClick={handleSignUp}
-            className="w-full rounded-xl text-black font-semibold bg-white hover:opacity-90"
-          >
-            SIGN UP
-          </Button>
+          <>
+            {/* Username */}
+            <div className="mb-2">
+              <Label htmlFor="username" className="text-white">
+                Username
+              </Label>
+              <div className="relative">
+                <FiUser className="absolute top-2.5 left-3 text-white" />
+                <Input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Username"
+                  className="pl-10 bg-white/30 text-black placeholder-black rounded-xl"
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="mb-2">
+              <Label htmlFor="email" className="text-white">
+                Email
+              </Label>
+              <div className="relative">
+                <FiAtSign className="absolute top-2.5 left-3 text-white" />
+                <Input
+                  id="email"
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  className="pl-10 bg-white/30 text-black placeholder-black rounded-xl"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="mb-4">
+              <Label htmlFor="password" className="text-white">
+                Password
+              </Label>
+              <div className="relative">
+                <FiLock className="absolute top-2.5 left-3 text-white" />
+                <Input
+                  id="password"
+                  type={type}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  className="pl-10 bg-white/30 text-black placeholder-black rounded-xl"
+                  autoComplete="new-password"
+                />
+                <span
+                  onClick={handlePasswordToggle}
+                  className="absolute right-3 top-2.5 cursor-pointer"
+                >
+                  <Eye size={16} />
+                </span>
+              </div>
+            </div>
+
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+            <Button
+              onClick={handleSignUp}
+              className="w-full rounded-xl text-black font-semibold bg-white hover:opacity-90"
+            >
+              SIGN UP
+            </Button>
+          </>
         ) : (
           <>
             <Label htmlFor="verificationCode" className="text-white">
@@ -219,6 +215,7 @@ export default function CustomSignUp() {
               placeholder="Enter the code sent to your email"
               className="mb-4 bg-white/30 text-black placeholder-black rounded-xl"
             />
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
             <Button onClick={handleVerifyCode}>Verify Email</Button>
           </>
         )}

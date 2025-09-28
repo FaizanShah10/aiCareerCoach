@@ -46,10 +46,10 @@ const QuizDashboard = () => {
   }
 
   // Validation for correct topic Input
-  if (topic.length < 3 || !/[a-zA-Z]/.test(topic) || /\d/.test(topic)) {
-    toast.error("Please enter a meaningful topic name.")
-    return
-  }
+  // if (topic.length < 3 || !/[a-zA-Z]/.test(topic) || /\d/.test(topic)) {
+  //   toast.error("Please enter a meaningful topic name.")
+  //   return
+  // }
 
   try {
     setLoading(true)
@@ -98,7 +98,7 @@ const QuizDashboard = () => {
       toast.success("Quiz Completed Successfully")
       setShowResult(true)
     } catch (error: any) {
-      console.log("Error storing quiz result", error.message)
+      // console.log("Error storing quiz result", error.message)
       toast.error("Error saving your quiz result")
     } finally {
       setLoadingQuizResult(false)

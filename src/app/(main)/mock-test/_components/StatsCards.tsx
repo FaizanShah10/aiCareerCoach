@@ -31,9 +31,7 @@ const StatsCards = ({assessments}: any) => {
   const getTotalQuestionsAttempted = () => {
     if (!assessments?.length) return 0;
     const totalQuestionsAttempted = assessments.reduce(
-      (acc: number, assessment: any) => acc + assessment.questions.length, 
-      0
-    );
+      (acc: number, assessment: any) => acc + assessment.questions.length, 0);
     return totalQuestionsAttempted;
   }
 
@@ -41,6 +39,7 @@ const StatsCards = ({assessments}: any) => {
   return (
     <div>
       <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-4">
+        {/* Average Score */}
         <Card>
           <CardHeader className="flex items-center flex-row justify-between space-y-0 pb-2">
             <CardTitle>Average Score</CardTitle>
@@ -52,6 +51,7 @@ const StatsCards = ({assessments}: any) => {
           </CardContent>
         </Card>
 
+        {/* Questions Practiced */}
         <Card>
           <CardHeader className="flex items-center flex-row justify-between space-y-0 pb-2">
             <CardTitle>Questions Practiced</CardTitle>
@@ -63,6 +63,7 @@ const StatsCards = ({assessments}: any) => {
           </CardContent>
         </Card>
 
+        {/* Latest Score */}
         <Card>
           <CardHeader className="flex items-center flex-row justify-between space-y-0 pb-2">
             <CardTitle>Latest Score</CardTitle>
