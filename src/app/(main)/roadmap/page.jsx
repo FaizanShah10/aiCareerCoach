@@ -50,20 +50,20 @@ const page = () => {
           <CardTitle></CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col lg:flex-row gap-10">
+          <div className="flex flex-col md:flex-row gap-10">
             {/* Form Section */}
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full fixed  lg:w-1/2">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full  lg:w-1/2">
               <div className="grid w-full items-center gap-7">
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="roadmap">
-                    Enter roadmap details you want
+                <div className="flex flex-col space-y-4">
+                  <Label htmlFor="roadmap" className="font-semibold">
+                    Enter Roadmap Details You Want
                   </Label>
                   <Textarea
                     className="resize-none"
                     rows={5}
                     {...register("roadmap", { required: true })}
                     id="roadmap"
-                    placeholder="Enter roadmap details"
+                    placeholder="e.g Frontend Web Development"
                   />
                 </div>
                 <Button>

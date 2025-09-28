@@ -74,6 +74,12 @@ const Header = () => {
                   Roadmap Generation
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/mock-test" className="flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4" />
+                  Mock Test
+                </Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 

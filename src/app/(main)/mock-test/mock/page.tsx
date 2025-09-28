@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react"
 const MockInterviewPage = () => {
   return (
     <div className="mt-20 lg:px-24 md:px-18 px-4 min-h-screen">
-          <Link className="flex items-center gap-2 underline mb-3" href={"/interview"}>
+          <Link className="flex items-center gap-2 underline mb-3" href={"/mock-test"}>
             <ArrowLeft className="w-5 h-5"/><p className="text-sm">Back to Interview Insights Page</p>
           </Link>
 
