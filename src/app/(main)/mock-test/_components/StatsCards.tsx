@@ -13,7 +13,7 @@ import { Brain, Target, Trophy } from "lucide-react";
 const StatsCards = ({assessments}: any) => {
 
 
-
+ 
   const getAverageScore = () => {
     if(assessments.length === 0) return 0
     const averageScore = assessments.reduce(

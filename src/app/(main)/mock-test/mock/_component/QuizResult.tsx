@@ -18,7 +18,7 @@ export default function QuizResult({
         <Trophy className="h-6 w-6 text-yellow-500" />
         Quiz Results
       </h1>
-
+ 
       <CardContent className="space-y-6">
         {/* Score Overview */}
         <div className="text-center space-y-2">

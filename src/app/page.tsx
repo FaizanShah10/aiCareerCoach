@@ -6,7 +6,7 @@ import Testimonial from '@/components/Testimonials'
 
 export default function Home(){
   return (
-    <div>
+    <div> 
       <HeroSection/>
       <FeatureSection/>
       <Testimonial/>
