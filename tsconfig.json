@@ -23,6 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/data/Features.js", "src/app/(auth)/sign-up/[[...sign-up]]/page.jsx", "src/app/(auth)/sign-in/[[...sign-in]]/page.jsx", "src/app/(main)/resume/components/form/PersonalInfo.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/data/Features.js", "src/app/(auth)/sign-up/[[...sign-up]]/page.jsx", "src/app/(auth)/sign-in/[[...sign-in]]/page.jsx", "src/app/(main)/resume/components/form/PersonalInfo.jsx", "src/app/(main)/faizan/page.jsx"],
   "exclude": ["node_modules"],
 }

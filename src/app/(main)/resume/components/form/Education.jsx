@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { saveEducation } from '../../../../../../actions/resume'
 import { Button } from '../../../../../components/ui/button'

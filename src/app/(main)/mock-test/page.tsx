@@ -1,5 +1,4 @@
 import { getAssessment } from "../../../../actions/interview"
-import useFetch from "../../../../hooks/useFetch"
 import PerformaceChart from "./_components/PerformaceChart"
 import QuizList from "./_components/QuizList"
 import StatsCards from "./_components/StatsCards"

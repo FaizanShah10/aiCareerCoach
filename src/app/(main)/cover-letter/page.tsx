@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -17,7 +15,6 @@ import { useForm } from "react-hook-form";
 import { generateCoverLetter } from "../../../../actions/coverletter";
 import { toast } from "sonner";
 import { useState } from "react";
-import test from "node:test";
 
 const page = () => {
   const {

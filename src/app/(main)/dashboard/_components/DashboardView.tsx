@@ -13,7 +13,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -162,6 +161,8 @@ const DashboardView = ({ insights }: any) => {
             </div>
           </CardContent>
         </Card>
+
+        
       </div>
 
       {/* Graph Section */}

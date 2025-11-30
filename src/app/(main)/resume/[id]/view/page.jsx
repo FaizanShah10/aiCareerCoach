@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ResumePreview from '../../components/ResumePreview'
 import { getCurrentResume } from '../../../../../../actions/resume'
 import { ResumeInfoContext } from '../../../../../context/ResumeInfoContext'
