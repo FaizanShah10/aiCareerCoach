@@ -1,19 +1,36 @@
 "use server"
-//2 functions
-    //1. A function for generating Ai response -- generateAiIndustryInsights()
-    //2. A function for taking that Ai function and setting the industry insights
 
 
+import { IndustryInsights } from "@/types/industryInsights";
 import { db } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import {GoogleGenerativeAI} from '@google/generative-ai'
+import { redirect } from 'next/navigation';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash-lite",
 });
 
-export const generateAiIndustryInsights = async (industry: any) => {
+type AiIndustryInsights = {
+  salaryRanges: {
+    role: string;
+    min: number;
+    max: number;
+    median: number;
+    location: string;
+  }[];
+  growthRate: number;
+  demandLevel: "High" | "Medium" | "Low";
+  marketOutlook: "Positive" | "Neutral" | "Negative";
+  topSkills: string[];
+  keyTrends: string[];
+  recommendedSkills: string[];
+};
+
+export const generateAiIndustryInsights = async (
+  industry: string
+): Promise<AiIndustryInsights> => {
     const prompt = `
           Analyze the current state of the ${industry} industry and provide insights in ONLY the following JSON format without any additional notes or explanations:
           {
@@ -42,44 +59,28 @@ export const generateAiIndustryInsights = async (industry: any) => {
 
 }
 
-export const getIndustryInsights = async () => {
-            try {
-                const {userId} = await auth()
-        
-                if(!userId){    
-                    return {status: 'NotLoggedIn', message: 'Please login to access onboarding status'}
-                }
-        
-                const user = await db.user.findUnique({
-                    where: {
-                        clerkUserId: userId
-                    },
-                    include: {
-                        industryInsight: true
-                    }
-                })
-    
-                
-                //if no industry insights are found
-                if(!user?.industryInsight){
-                    //generating insights from ai and storing them into db
-                    const insights = await generateAiIndustryInsights(user?.industry)
+export const getIndustryInsights = async (): Promise<IndustryInsights> => {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
 
-                    const industryInsight = await db.industryInsight.create({
-                        data: {
-                            industry: user?.industry,
-                            ...insights,
-                            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-                        }
-                    })
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+    include: { industryInsight: true },
+  });
 
-                    return industryInsight
-                }
+  if (!user?.industryInsight) redirect("/onboarding");
 
-                //if already industry insights are found
-                return user.industryInsight
+  const insight = user.industryInsight;
 
-            } catch (error: any) {
-                console.log("Error creating industry insights", error.message)
-            }
-}
+  return {
+    salaryRanges: insight.salaryRanges as IndustryInsights["salaryRanges"],
+    growthRate: insight.growthRate,
+    demandLevel: insight.demandLevel.toLowerCase() as IndustryInsights["demandLevel"],
+    marketOutlook: insight.marketOutlook.toLowerCase() as IndustryInsights["marketOutlook"],
+    topSkills: insight.topSkills,
+    keyTrends: insight.keyTrends,
+    recommendedSkills: insight.recommendedSkills,
+    lastUpdated: insight.lastUpdated,
+    nextUpdate: insight.nextUpdate,
+  };
+};

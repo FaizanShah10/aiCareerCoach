@@ -139,7 +139,7 @@ export async function getAssessment(): Promise<Assessment[] | undefined> {
                     createdAt: 'desc'
                 }
             })
-            return raw.map((a) => ({
+            return raw.map((a: typeof raw[number]) => ({
     id: a.id,
     quizScore: a.quizScore,
     createdAt: a.createdAt,

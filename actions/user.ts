@@ -1,10 +1,8 @@
-"use server"
-
+"use server";
 
 import { db } from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { generateAiIndustryInsights } from "./industryInsights";
-
 
 export async function createUserInDB() {
   try {
@@ -59,16 +57,15 @@ export async function updateUser(data: any) {
     if (!industryInsights) {
       const insights = await generateAiIndustryInsights(formattedIndustry);
 
-      const result = await db.$transaction(async (tx) => {
-        const createdInsight = await tx.industryInsight.create({
+      const [createdInsight, updatedUser] = await db.$transaction([
+        db.industryInsight.create({
           data: {
             industry: formattedIndustry,
             ...insights,
             nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           },
-        });
-
-        const updatedUser = await tx.user.update({
+        }),
+        db.user.update({
           where: { id: user.id },
           data: {
             industry: formattedIndustry,
@@ -76,12 +73,14 @@ export async function updateUser(data: any) {
             bio: data.bio,
             skills: data.skills,
           },
-        });
+        }),
+      ]);
 
-        return { success: true, updatedUser, industryInsights: createdInsight };
-      });
-
-      return result;
+      return {
+        success: true,
+        updatedUser,
+        industryInsights: createdInsight,
+      };
     }
 
     const updatedUser = await db.user.update({
@@ -101,33 +100,31 @@ export async function updateUser(data: any) {
   }
 }
 
+export async function getOnBoardingUserStatus() {
+  try {
+    const { userId } = await auth();
 
-
-export async function getOnBoardingUserStatus(){
-    try {
-        const {userId} = await auth()
-
-        if(!userId){    
-            return {status: 'NotLoggedIn', message: 'Please login to access onboarding status'}
-        }
-
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            },
-            select: {
-                industry: true
-            }
-
-        })
-
-        return {
-            isOnboarded: !!user?.industry
-        }
-        
-
-    } catch (error: any) {
-        console.log("Error Getting the onBoarding Status",error.message)
-        throw new Error("Errors fetching onboarding status")
+    if (!userId) {
+      return {
+        status: "NotLoggedIn",
+        message: "Please login to access onboarding status",
+      };
     }
+
+    const user = await db.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+      select: {
+        industry: true,
+      },
+    });
+
+    return {
+      isOnboarded: !!user?.industry,
+    };
+  } catch (error: any) {
+    console.log("Error Getting the onBoarding Status", error.message);
+    throw new Error("Errors fetching onboarding status");
+  }
 }
