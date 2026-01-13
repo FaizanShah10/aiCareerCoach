@@ -36,7 +36,7 @@ export default function CustomSignIn() {
       } else {
         console.log("Additional steps required:", result);
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.errors?.[0]?.message || "Sign-in failed");
     }
   };
@@ -50,7 +50,7 @@ export default function CustomSignIn() {
         redirectUrl: "/sso-callback",
         redirectUrlComplete: "/",
       });
-    } catch (err: any) {
+    } catch (err) {
       setError(err.errors?.[0]?.message || "Google sign-in failed");
     }
   };

@@ -53,7 +53,7 @@ export default function CustomSignUp() {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setIsVerificationSent(true);
       toast.info("Verification code sent to your email!");
-    } catch (err: any) {
+    } catch (err) {
       const msg =
         err?.errors?.[0]?.message || "Sign-up failed. Please try again.";
       setError(msg);
@@ -85,7 +85,7 @@ export default function CustomSignUp() {
       } else {
         toast.error("Incorrect or expired verification code. Try again.");
       }
-    } catch (err: any) {
+    } catch (err) {
       const msg =
         err?.errors?.[0]?.message || "Verification failed. Try again.";
       setError(msg);
@@ -102,7 +102,7 @@ export default function CustomSignUp() {
         redirectUrl: "/",
         redirectUrlComplete: "/",
       });
-    } catch (err: any) {
+    } catch (err) {
       const msg =
         err?.errors?.[0]?.message || "Google sign-up failed. Try again.";
       setError(msg);
