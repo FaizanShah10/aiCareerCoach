@@ -24,14 +24,29 @@ import { Button } from "@/components/ui/button";
 import { onBoardingSchema } from "@/models/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { updateUser } from "../../../../../actions/user";
+import { z } from "zod";
 
-const OnBoardingForm = ({ industries }: any) => {
-  const [selectedIndustry, setSelectedIndustry] = useState<any>(null);
+// Define TypeScript interfaces
+interface Industry {
+  id: string;
+  name: string;
+  subIndustries?: string[];
+}
+
+interface OnBoardingFormProps {
+  industries: Industry[];
+}
+
+// Infer the type from the Zod schema
+type FormValues = z.infer<typeof onBoardingSchema>;
+
+const OnBoardingForm = ({ industries }: OnBoardingFormProps) => {
+  const [selectedIndustry, setSelectedIndustry] = useState<Industry | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -42,20 +57,27 @@ const OnBoardingForm = ({ industries }: any) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormValues>({
     resolver: zodResolver(onBoardingSchema),
+    defaultValues: {
+      subIndustry: "", // Provide default value if it's required in schema
+    },
   });
 
   const watchIndustry = watch("industry");
 
-  const onSubmit = async (values: any) => {
-    const formattedIndustry = values.subIndustry
+  const onSubmit = async (values: FormValues) => {
+    const formattedIndustry = values.subIndustry && values.subIndustry.trim() !== ""
       ? `${values.industry}-${values.subIndustry.toLowerCase().replace(/ /g, "-")}`
       : values.industry;
 
     setLoading(true);
     try {
-      const result = await updateUser({ formattedIndustry, ...values });
+      const result = await updateUser({ 
+        formattedIndustry, 
+        ...values,
+        experience: Number(values.experience)
+      });
 
       if (result?.success) {
         toast.success("Profile Successfully Completed");
@@ -64,8 +86,9 @@ const OnBoardingForm = ({ industries }: any) => {
       } else {
         toast.error("Failed to update profile.");
       }
-    } catch (err: any) {
-      toast.error(err.message || "An error occurred.");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An error occurred.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
       reset();
@@ -89,29 +112,34 @@ const OnBoardingForm = ({ industries }: any) => {
             <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
               <Select
-                onValueChange={(value) => {
+                onValueChange={(value: string) => {
                   setValue("industry", value);
-                  setSelectedIndustry(industries.find((i: any) => i.id === value));
+                  setSelectedIndustry(industries.find((i: Industry) => i.id === value) || null);
+                  // Reset subIndustry when industry changes
+                  setValue("subIndustry", "");
                 }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select industry" />
                 </SelectTrigger>
                 <SelectContent>
-                  {industries.map((i: any) => (
+                  {industries.map((i: Industry) => (
                     <SelectItem key={i.id} value={i.id}>
                       {i.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {errors.industry && (
+                <p className="text-sm text-red-500">{errors.industry.message}</p>
+              )}
             </div>
 
             {/* Sub Industry */}
-            {watchIndustry && selectedIndustry?.subIndustries?.length > 0 && (
+            {watchIndustry && selectedIndustry?.subIndustries && selectedIndustry.subIndustries.length > 0 && (
               <div className="space-y-2">
                 <Label htmlFor="subIndustry">Specialization</Label>
-                <Select onValueChange={(value) => setValue("subIndustry", value)}>
+                <Select onValueChange={(value: string) => setValue("subIndustry", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select specialization" />
                   </SelectTrigger>
@@ -126,6 +154,9 @@ const OnBoardingForm = ({ industries }: any) => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+                {errors.subIndustry && (
+                  <p className="text-sm text-red-500">{errors.subIndustry.message}</p>
+                )}
               </div>
             )}
 
@@ -138,7 +169,7 @@ const OnBoardingForm = ({ industries }: any) => {
                 min="0"
                 max="50"
                 placeholder="Years of experience"
-                {...register("experience")}
+                {...register("experience", { valueAsNumber: true })}
               />
               {errors.experience && (
                 <p className="text-sm text-red-500">{errors.experience.message}</p>

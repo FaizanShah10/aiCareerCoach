@@ -1,6 +1,10 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { toast } from "sonner";
+import { BarLoader } from "react-spinners";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,116 +12,140 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { useState } from "react"
-import { generateQuizQuestions, storeQuizQuestions } from "../../../../../../actions/interview"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { BarLoader } from "react-spinners"
-import { toast } from "sonner"
-import QuizResult from "./QuizResult"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
+
+import QuizResult from "./QuizResult";
+import {
+  generateQuizQuestions,
+  storeQuizQuestions,
+} from "../../../../../../actions/interview";
+
+/* ======================
+   Types
+====================== */
+
+type QuizQuestion = {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+};
+
+type QuizResultData = {
+  quizScore: number;
+  improvementTip?: string;
+  questions: QuizQuestion[];
+};
+
+/* ======================
+   Component
+====================== */
 
 const QuizDashboard = () => {
-  const [topic, setTopic] = useState("")
-  const [quizData, setQuizData] = useState<any[] | null>(null)
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<any[]>([])
-  const [score, setScore] = useState(0)
-  const [showResult, setShowResult] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [loadingQuizResult, setLoadingQuizResult] = useState(false)
-  const [resultData, setResultData] = useState<any | null>(null)
+  const [topic, setTopic] = useState("");
+  const [quizData, setQuizData] = useState<QuizQuestion[] | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingQuizResult, setLoadingQuizResult] = useState(false);
+  const [resultData, setResultData] = useState<QuizResultData | null>(null);
 
   const startNewQuiz = () => {
-    setCurrentQuestion(0)
-    setAnswers([])
-    setScore(0)
-    setShowResult(false)
-    setResultData(null)
-    setQuizData(null)
-    setTopic("")
-  }
+    setTopic("");
+    setQuizData(null);
+    setCurrentQuestion(0);
+    setAnswers([]);
+    setResultData(null);
+  };
 
   const handleStartQuiz = async () => {
-  if (!topic.trim()) {
-    toast.error("Please enter a topic for your quiz.")
-    return
-  }
-
-  // Validation for correct topic Input
-  // if (topic.length < 3 || !/[a-zA-Z]/.test(topic) || /\d/.test(topic)) {
-  //   toast.error("Please enter a meaningful topic name.")
-  //   return
-  // }
-
-  try {
-    setLoading(true)
-    const questions = await generateQuizQuestions(topic)
-    if (!questions || questions.length === 0) {
-      toast.error("Could not generate questions for this topic. Try another one.")
-      return
+    if (!topic.trim()) {
+      toast.error("Please enter a topic for your quiz.");
+      return;
     }
-    setQuizData(questions)
-    toast.success("Quiz started!")
-  } catch (err) {
-    toast.error("Failed to generate quiz questions. Try another topic.")
-  } finally {
-    setLoading(false)
-  }
-}
 
+    try {
+      setLoading(true);
+      const questions = await generateQuizQuestions(topic);
 
-  const question = quizData ? quizData[currentQuestion] : null
-
-  const handleNextQuestion = () => {
-    if (quizData && currentQuestion < quizData.length - 1) {
-      setCurrentQuestion((prev) => prev + 1)
-    } else {
-      finishQuiz()
-    }
-  }
-
-  const calculateScore = () => {
-    let score = 0
-    answers.forEach((userAnswer: string, index: number) => {
-      if (userAnswer === quizData![index].correctAnswer) {
-        score += 1
+      if (!questions || questions.length === 0) {
+        toast.error("Could not generate questions. Try another topic.");
+        return;
       }
-    })
-    return (score / quizData!.length) * 100
-  }
+
+      setQuizData(questions as QuizQuestion[]);
+      toast.success("Quiz started!");
+    } catch {
+      toast.error("Failed to generate quiz questions.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAnswer = (answer: string) => {
+    const updatedAnswers = [...answers];
+    updatedAnswers[currentQuestion] = answer;
+    setAnswers(updatedAnswers);
+  };
+
+  const calculateScore = (): number => {
+    if (!quizData) return 0;
+
+    const correctCount = answers.reduce((acc, answer, index) => {
+      return answer === quizData[index].correctAnswer ? acc + 1 : acc;
+    }, 0);
+
+    return (correctCount / quizData.length) * 100;
+  };
 
   const finishQuiz = async () => {
-    if (!quizData) return
-    const finalScore = calculateScore()
-    setLoadingQuizResult(true)
+    if (!quizData) return;
+
+    const finalScore = calculateScore();
+    setLoadingQuizResult(true);
+
     try {
-      const result = await storeQuizQuestions(quizData, answers, finalScore)
-      setResultData(result)
-      toast.success("Quiz Completed Successfully")
-      setShowResult(true)
-    } catch (error: any) {
-      // console.log("Error storing quiz result", error.message)
-      toast.error("Error saving your quiz result")
+      const result = await storeQuizQuestions(
+        quizData,
+        answers,
+        finalScore
+      );
+
+      setResultData({
+        quizScore: result.quizScore,
+        improvementTip: result.improvementTip || undefined,
+        questions: result.questions as QuizQuestion[],
+      });
+      toast.success("Quiz completed successfully.");
+    } catch {
+      toast.error("Error saving quiz result.");
     } finally {
-      setLoadingQuizResult(false)
+      setLoadingQuizResult(false);
     }
-  }
+  };
 
-  const handleAnswer = (answer: any) => {
-    const newAnswers = [...answers]
-    newAnswers[currentQuestion] = answer
-    setAnswers(newAnswers)
-  }
+  const handleNextQuestion = () => {
+    if (!quizData) return;
 
-  // UI rendering
+    if (currentQuestion < quizData.length - 1) {
+      setCurrentQuestion((prev) => prev + 1);
+    } else {
+      finishQuiz();
+    }
+  };
+
+  /* ======================
+     UI States
+  ====================== */
+
   if (loading) {
-    return <BarLoader className="mt-4" width={"100%"} color="gray" />
+    return <BarLoader className="mt-4" width="100%" color="gray" />;
   }
 
   if (resultData) {
-    return <QuizResult result={resultData} startNewQuiz={startNewQuiz} />
+    return <QuizResult result={resultData} startNewQuiz={startNewQuiz} />;
   }
 
   if (!quizData) {
@@ -136,57 +164,58 @@ const QuizDashboard = () => {
             onChange={(e) => setTopic(e.target.value)}
           />
         </CardContent>
-
         <CardFooter>
           <Button onClick={handleStartQuiz} className="w-full">
             Start Quiz
           </Button>
         </CardFooter>
       </Card>
-    )
+    );
   }
 
-  return (
-    <div className="w-full">
-      <Card className="max-w-lg w-full">
-        <CardHeader>
-          <CardTitle>
-            Question {currentQuestion + 1} of {quizData.length}
-          </CardTitle>
-          <CardDescription>{question?.question}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup
-            onValueChange={handleAnswer}
-            value={answers[currentQuestion]}
-            className="space-y-2"
-          >
-            {question?.options.map((option: string, index: number) => (
-              <div key={index} className="flex items-center space-x-2">
-                <RadioGroupItem value={option} id={`option-${index}`} />
-                <Label htmlFor={`option-${index}`}>{option}</Label>
-              </div>
-            ))}
-          </RadioGroup>
-        </CardContent>
-        <CardFooter>
-          <Button
-            disabled={!answers[currentQuestion]}
-            onClick={handleNextQuestion}
-            className="w-full"
-          >
-            {loadingQuizResult ? (
-              <BarLoader className="mt-4" width={"100%"} color="gray" />
-            ) : currentQuestion < quizData.length - 1 ? (
-              "Next Question"
-            ) : (
-              "Finish Quiz"
-            )}
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
-  )
-}
+  const question = quizData[currentQuestion];
 
-export default QuizDashboard
+  return (
+    <Card className="max-w-lg w-full">
+      <CardHeader>
+        <CardTitle>
+          Question {currentQuestion + 1} of {quizData.length}
+        </CardTitle>
+        <CardDescription>{question.question}</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <RadioGroup
+          onValueChange={handleAnswer}
+          value={answers[currentQuestion]}
+          className="space-y-2"
+        >
+          {question.options.map((option) => (
+            <div key={option} className="flex items-center space-x-2">
+              <RadioGroupItem value={option} id={option} />
+              <Label htmlFor={option}>{option}</Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </CardContent>
+
+      <CardFooter>
+        <Button
+          disabled={!answers[currentQuestion]}
+          onClick={handleNextQuestion}
+          className="w-full"
+        >
+          {loadingQuizResult ? (
+            <BarLoader width="100%" color="gray" />
+          ) : currentQuestion < quizData.length - 1 ? (
+            "Next Question"
+          ) : (
+            "Finish Quiz"
+          )}
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default QuizDashboard;

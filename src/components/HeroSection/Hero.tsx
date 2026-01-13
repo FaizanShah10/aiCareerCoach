@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Banner1 from "../../../public/Banner1.webp";
-import { Button } from "../ui/button";
 
 
 export default function Home() {
@@ -19,10 +18,7 @@ export default function Home() {
         <p className="text-sm md:text-xl mt-4">Unlock your full potential with AI-driven career insights.</p>
         <div className="mt-6 flex space-x-4">
            
-          {/* <Button className="bg-white rounded-full px-7 py-5 font-medium text-black hover:bg-white text-sm">Get Started</Button>
-          <Button className="bg-black rounded-full px-7 py-5 font-medium text-white hover:bg-black text-sm border border-gray-300">
-                Watch demo
-           </Button> */}
+
         </div>
       </div>
     </div>

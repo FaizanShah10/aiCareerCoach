@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma"
 import { auth } from "@clerk/nextjs/server"
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { err } from "inngest/types";
+import { Assessment, Question } from "@/types/assessment";
 
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
@@ -116,7 +116,7 @@ export async function storeQuizQuestions(
 }
 
 // For Fetching the Assessments
-export async function getAssessment(){
+export async function getAssessment(): Promise<Assessment[] | undefined> {
     try {
         const { userId } = await auth();
             if (!userId) {
@@ -131,7 +131,7 @@ export async function getAssessment(){
                 throw new Error("User Not Found");
             }
 
-            const response = await db.assessment.findMany({
+            const raw = await db.assessment.findMany({
                 where: {
                     userId: user.id
                 },
@@ -139,7 +139,14 @@ export async function getAssessment(){
                     createdAt: 'desc'
                 }
             })
-            return response
+            return raw.map((a) => ({
+    id: a.id,
+    quizScore: a.quizScore,
+    createdAt: a.createdAt,
+    category: a.category,
+    improvementTip: a.improvementTip ?? undefined,
+    questions: a.questions as Question[], // validate later with Zod
+  }));
 
             // console.log(response)
     } catch (error: any) {

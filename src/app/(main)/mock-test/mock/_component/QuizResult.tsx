@@ -5,11 +5,36 @@ import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-export default function QuizResult({
+/* ======================
+   Types
+====================== */
+
+type ReviewedQuestion = {
+  question: string;
+  userAnswer: string;
+  correctAnswer: string;
+  explanation: string;
+  isCorrect: boolean;
+};
+
+type QuizResultData = {
+  quizScore: number;
+  improvementTip?: string;
+  questions: ReviewedQuestion[];
+};
+
+type QuizResultProps = {
+  result: QuizResultData | null;
+  hideStartNew?: boolean;
+  onStartNew?: () => void;
+};
+
+
+const QuizResult = ({
   result,
   hideStartNew = false,
   onStartNew,
-}: any) {
+}: QuizResultProps) => {
   if (!result) return null;
 
   return (
@@ -18,11 +43,13 @@ export default function QuizResult({
         <Trophy className="h-6 w-6 text-yellow-500" />
         Quiz Results
       </h1>
- 
+
       <CardContent className="space-y-6">
         {/* Score Overview */}
         <div className="text-center space-y-2">
-          <h3 className="text-2xl font-bold">{result.quizScore.toFixed(1)}%</h3>
+          <h3 className="text-2xl font-bold">
+            {result.quizScore.toFixed(1)}%
+          </h3>
           <Progress value={result.quizScore} className="w-full" />
         </div>
 
@@ -30,27 +57,38 @@ export default function QuizResult({
         {result.improvementTip && (
           <div className="bg-muted p-4 rounded-lg">
             <p className="font-medium">Improvement Tip:</p>
-            <p className="text-muted-foreground">{result.improvementTip}</p>
+            <p className="text-muted-foreground">
+              {result.improvementTip}
+            </p>
           </div>
         )}
 
         {/* Questions Review */}
         <div className="space-y-4">
           <h3 className="font-medium">Question Review</h3>
-          {result.questions.map((question: any, index: number) => (
-            <div key={index} className="border rounded-lg p-4 space-y-2">
+
+          {result.questions.map((question, index) => (
+            <div
+              key={`${index}-${question.question}`}
+              className="border rounded-lg p-4 space-y-2"
+            >
               <div className="flex items-start justify-between gap-2">
                 <p className="font-medium">{question.question}</p>
+
                 {question.isCorrect ? (
                   <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
                 ) : (
                   <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                 )}
               </div>
+
               <div className="text-sm text-muted-foreground">
                 <p>Your answer: {question.userAnswer}</p>
-                {!question.isCorrect && <p>Correct answer: {question.correctAnswer}</p>}
+                {!question.isCorrect && (
+                  <p>Correct answer: {question.correctAnswer}</p>
+                )}
               </div>
+
               <div className="text-sm bg-muted p-2 rounded">
                 <p className="font-medium">Explanation:</p>
                 <p>{question.explanation}</p>
@@ -60,7 +98,7 @@ export default function QuizResult({
         </div>
       </CardContent>
 
-      {!hideStartNew && (
+      {!hideStartNew && onStartNew && (
         <CardFooter>
           <Button onClick={onStartNew} className="w-full">
             Start New Quiz
@@ -69,4 +107,6 @@ export default function QuizResult({
       )}
     </div>
   );
-}
+};
+
+export default QuizResult;
