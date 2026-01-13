@@ -105,6 +105,7 @@ const QuizList = ({ assessments }: QuizListProps) => {
                 improvementTip: selectedQuiz.improvementTip,
                 questions: selectedQuiz.questions.map((q) => ({
                   question: q.question,
+                  options: q.options,
                   userAnswer: q.userAnswer ?? "Not answered",
                   correctAnswer: q.correctAnswer,
                   explanation: q.explanation ?? "No explanation provided",
