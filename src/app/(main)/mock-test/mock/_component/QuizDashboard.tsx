@@ -18,30 +18,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 
 import QuizResult from "./QuizResult";
-import {
-  generateQuizQuestions,
-  storeQuizQuestions,
-} from "../../../../../../actions/interview";
-
-/* ======================
-   Types
-====================== */
-
-type QuizQuestion = {
-  question: string;
-  options: string[];
-  correctAnswer: string;
-};
-
-type QuizResultData = {
-  quizScore: number;
-  improvementTip?: string;
-  questions: QuizQuestion[];
-};
-
-/* ======================
-   Component
-====================== */
+import { generateQuizQuestions, storeQuizQuestions } from "../../../../../../actions/interview";
+import { QuizQuestion, ReviewedQuestion, QuizResultData } from "@/types/quiz";
 
 const QuizDashboard = () => {
   const [topic, setTopic] = useState("");
@@ -107,17 +85,21 @@ const QuizDashboard = () => {
     setLoadingQuizResult(true);
 
     try {
-      const result = await storeQuizQuestions(
-        quizData,
-        answers,
-        finalScore
-      );
+      await storeQuizQuestions(quizData, answers, finalScore);
+
+      // Map QuizQuestion[] to ReviewedQuestion[]
+      const reviewedQuestions: ReviewedQuestion[] = quizData.map((q, index) => ({
+        ...q,
+        userAnswer: answers[index],
+        isCorrect: answers[index] === q.correctAnswer,
+        explanation: "", // optional, can be filled later
+      }));
 
       setResultData({
-        quizScore: result.quizScore,
-        improvementTip: result.improvementTip || undefined,
-        questions: result.questions as QuizQuestion[],
+        quizScore: finalScore,
+        questions: reviewedQuestions,
       });
+
       toast.success("Quiz completed successfully.");
     } catch {
       toast.error("Error saving quiz result.");
@@ -145,7 +127,7 @@ const QuizDashboard = () => {
   }
 
   if (resultData) {
-    return <QuizResult result={resultData} startNewQuiz={startNewQuiz} />;
+    return <QuizResult result={resultData} onStartNew={startNewQuiz} />;
   }
 
   if (!quizData) {

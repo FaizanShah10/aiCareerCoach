@@ -4,24 +4,11 @@ import { Trophy, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { QuizResultData } from "@/types/quiz";
 
 /* ======================
    Types
 ====================== */
-
-type ReviewedQuestion = {
-  question: string;
-  userAnswer: string;
-  correctAnswer: string;
-  explanation: string;
-  isCorrect: boolean;
-};
-
-type QuizResultData = {
-  quizScore: number;
-  improvementTip?: string;
-  questions: ReviewedQuestion[];
-};
 
 type QuizResultProps = {
   result: QuizResultData | null;
