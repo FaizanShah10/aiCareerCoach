@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import OnBoardingForm from '@/app/(main)/onboarding/_components/onBoardingForm'
 import {industries} from '@/data/industries'
 import { getOnBoardingUserStatus } from '../../../../actions/user'
