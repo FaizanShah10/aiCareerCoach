@@ -20,7 +20,7 @@ export default function SignUpClient() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [type, setType] = useState<"text" | "password">("password");
+  const [type, setType] = useState<"text" | "password">("password" as "password");
   const [error, setError] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [isVerificationSent, setIsVerificationSent] = useState(false);
@@ -59,7 +59,7 @@ export default function SignUpClient() {
 
       setIsVerificationSent(true);
       toast.info("Verification code sent to your email");
-    } catch (err) {
+    } catch (err: any) {
       const msg =
         err?.errors?.[0]?.message ?? "Sign-up failed. Try again.";
       setError(msg);
@@ -83,7 +83,7 @@ export default function SignUpClient() {
       } else {
         toast.error("Invalid or expired code");
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(
         err?.errors?.[0]?.message ?? "Verification failed"
       );
